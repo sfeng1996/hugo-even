@@ -5,7 +5,7 @@ title:      "kubelet-client证书自签"
 description: "kubelet-client证书自签"
 excerpt: "kubelet-client证书自签"
 date:     2021-12-10
-#author:     ""
+author: sfeng
 image: "https://unsplash.com/blog/content/images/2021/04/Bruna-image-1-blog-2.jpg"
 categories: [ "Tech"]
 tags:
