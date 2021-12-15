@@ -9,7 +9,7 @@ date:     2021-11-22
 image: "https://unsplash.com/blog/content/images/size/w1600/2021/08/pawel-czerwinski-IskA3TGmyGk-unsplash.jpg"
 categories: [ "Tech"]
 tags:
-    - Kubertes
+    - Kubernetes
 URL: "/2021/11/22/operator-framework/"
 ---
 
