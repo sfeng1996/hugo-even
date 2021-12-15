@@ -1,15 +1,12 @@
 ---
 layout:     post
 title:      "kubebuiler"
-#subtitle:   "本文翻译自istio官方文档"
 description: "本文演示使用kubebuilder开发一个cronjob控制器"
-excerpt: "本文演示使用kubebuilder开发一个operator demo"
+except: "本文演示使用kubebuilder开发一个operator demo"
 date:     2021-11-29
-#author:     ""
-image: "https://unsplash.com/blog/content/images/2021/08/3_Million-blog.jpeg"
-categories: [ "Tech"]
-tags:
-- Kubertes
+author:  "sfeng"
+categories: ["Tech", "cloudNative"]
+tags: ["kubernetes", "operator"]
 URL: "/2021/11/29/operator-kubebuilder/"
 ---
 

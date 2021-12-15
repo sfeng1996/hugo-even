@@ -1,15 +1,12 @@
 ---
 layout:     post
 title:      "operator-framework"
-#subtitle:   "本文翻译自istio官方文档"
 description: "本文演示使用operator-framework开发一个operator demo"
-excerpt: "本文演示使用operator-framework开发一个operator demo"
+except: "本文演示使用operator-framework开发一个operator demo"
 date:     2021-11-22
-#author:     ""
-image: "https://unsplash.com/blog/content/images/size/w1600/2021/08/pawel-czerwinski-IskA3TGmyGk-unsplash.jpg"
-categories: [ "Tech"]
-tags:
-    - Kubernetes
+author: "sfeng"
+categories: ["Tech", "cloudNative", "dev"]
+tags: ["kubernetes", "operator"]
 URL: "/2021/11/22/operator-framework/"
 ---
 

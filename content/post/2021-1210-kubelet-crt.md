@@ -4,7 +4,7 @@ title:      "kubelet-client证书自签"
 description: "kubelet-client证书自签"
 date:     2021-12-10
 author: sfeng
-categories: ["Tech", "ops"]
+categories: ["Tech", "cloudNative", "ops"]
 tags: ["kubernetes"]
 URL: "/2021/12/10/kubelet-client-crt/"
 ---
