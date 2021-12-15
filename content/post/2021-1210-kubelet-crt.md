@@ -1,15 +1,13 @@
 ---
 layout:     post
 title:      "kubelet-client证书自签"
-#subtitle:   "本文翻译自istio官方文档"
 description: "kubelet-client证书自签"
-excerpt: "kubelet-client证书自签"
+except: "kubelet-client证书自签"
 date:     2021-12-10
 author: sfeng
 image: "https://unsplash.com/blog/content/images/2021/04/Bruna-image-1-blog-2.jpg"
-categories: [ "Tech"]
-tags:
-- Kubernetes
+categories: ["Tech", "ops"]
+tags: ["kubernetes"]
 URL: "/2021/12/10/kubelet-client-crt/"
 ---
 
