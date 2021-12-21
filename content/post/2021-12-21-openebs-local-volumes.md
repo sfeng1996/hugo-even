@@ -14,7 +14,7 @@ URL: "/2021/12/21/openebs-local-volumes/"
 
 **[openebs](https://openebs.io/)** 是一款使用Go语言编写的基于容器的块存储开源软件。OpenEBS 使得在容器中运行关键性任务和需要数据持久化的负载变得更可靠。
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6d672096-7462-489c-9911-8c9755736d13/Untitled.png)
+![Untitled](https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/20210106093708.png)
 
 **openebs** 有两类存储类型
 
