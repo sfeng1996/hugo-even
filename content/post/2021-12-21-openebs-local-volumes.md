@@ -5,7 +5,7 @@ description: "使用 openebs 作为本地存储实现数据持久化"
 except: "使用 openebs 作为本地存储实现数据持久化"
 date:     2021-12-21
 author:  "sfeng"
-categories: ["Tech", "cloudNative"]
+categories: ["Tech", "cloudNative", "ops"]
 tags: ["kubernetes", "storage"]
 URL: "/2021/12/21/openebs-local-volumes/"
 ---
