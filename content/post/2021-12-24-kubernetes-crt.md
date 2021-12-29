@@ -62,7 +62,7 @@ kubernetes/
 
 下面我们根据这个k8s的组件之间通讯图来一一讲解每个证书的作用。
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ca4ccd85-1a74-473a-94fa-9cde3c4a6c04/Untitled.png)
+![/img/kubernetes-crt-1.png]
 
 # **2.CA证书**
 
