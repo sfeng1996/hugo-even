@@ -9,7 +9,7 @@ tags: ["kubernetes", "security"]
 URL: "/2021/12/24/kubernetes-cert/"
 ---
 
-# **1.k8s证书介绍**
+# **k8s证书介绍**
 
 在 k8s apiserver 中提供了很多认证方式，其中最常用的就是 TLS 认证，当然也有 BootstrapToken，basicAuth认证等，只要有一个认证通过，那么apiserver即认为认证通过。下面就主要讲解TLS认证。
 
@@ -64,11 +64,11 @@ kubernetes/
 
 ![](/img/kubernetes-crt-1.png)
 
-# **2.CA证书**
+# **CA证书**
 
 kubeadm安装的集群中我们都是用3套CA证书来管理和签发其他证书，一套CA给ETCD使用，一套是给kubernates内部组件使用，还有一套是给配置聚合层使用的，当然如果你觉得管理3套CA比较麻烦，您也可以用一套来管理。
 
-# **3.etcd证书**
+# **etcd证书**
 
 ```
 ca.crt  ca.key  healthcheck-client.crt  healthcheck-client.key  peer.crt  peer.key  server.crt  server.key
@@ -128,7 +128,7 @@ ca.crt  ca.key peer.crt  peer.key
 healthcheck-client.crt  healthcheck-client.key
 ```
 
-# **4.kube-apiserver证书**
+# **kube-apiserver证书**
 
 ```
   name: kube-apiserver
@@ -217,7 +217,7 @@ sa.pub
 
 到这里，集群生成的所有证书介绍完了，那么像kube-controller-mananger、kube-scheduler、kube-proxy、kubele这些组件也是需要访问apiserver的，那么他们是怎么通讯的呢？下面我们可以看看这些组件是如何和apiserver进行通讯的。
 
-# **5.kube-controller-mananger**
+# **kube-controller-mananger**
 
 还是和之前一样，我们通过kube-controller-mananger的yaml文件配置来看看是如何访问apiserver。
 
@@ -319,7 +319,7 @@ HDvs+q640H9biz+OWdewHcQq4MohCWnl8aW5IaeRamfY/sg/1wSW2FmxebA=
 
 从解码可以发现，kubeconfig配置的就是kubernates的CA证书，client-certificate-data和client-key-data就是controller-manager用来访问apiserver的客户端证书和秘钥，只不过kubeconfig对内容进行了base64编码。这个就是整个controller-manager和apiserver证书认证的方式。
 
-# **6.kube-scheduler**
+# **kube-scheduler**
 
 kube-scheduler也是同样的原理，也是在yaml中配置一个kubeconfig来进行访问apiserver
 
@@ -349,7 +349,7 @@ users:
 
 同理，解析certificate-authority-data也是kubernates的CA证书，client-certificate-data和client-key-data就是kube-scheduler用来访问apiserver的客户端证书和秘钥
 
-# **7.kube-proxy**
+# **kube-proxy**
 
 在这里我们并未发现kube-proxy的kubeconfig，kube-proxy也是需要访问apiserver的，那么是如何进行认证的。还是从yaml文件进行分析一下，如果需要认证，肯定会在yaml中配置对应的证书或者包含证书的文件或token
 
@@ -433,7 +433,7 @@ type: kubernetes.io/service-account-token
 
 从上面token的内容，这个里面包含一个CA证书是kubernates ca证书，用于验证 apiserver。token就是用来apiserver验证kube-proxy的。token的内容并不是证书，所以使用serviceAccount 与apiserver通讯是一个单向TLS认证。在k8s里除了scheduler，controller-manager 这些静态pod 使用kubeconfig 作为凭证访问apiserver，其余pod访问apiserver和kube-proxy类似，都是使用token 挂载。
 
-# **8.kubelet**
+# **kubelet**
 
 kubelet和其他组件类似，用的kubeconfig来进行认证的，都是用kubernates的CA生成。
 
@@ -580,7 +580,7 @@ Environment="KUBELET_EXTRA_ARGS=--feature-gates=RotateKubeletServerCertificate=t
     - --feature-gates=RotateKubeletServerCertificate=true # 该参数表示自动同意，可以不配置，因为server的请求不会自动批准，需要手动批准。
 ```
 
-# **9.Service Account 认证**
+# **Service Account 认证**
 
 在k8s 集群内部访问 apiserver 使用的是service account ，如pod访问apiserver
 
