@@ -606,7 +606,7 @@ Environment="KUBELET_EXTRA_ARGS=--feature-gates=RotateKubeletServerCertificate=t
 
 创建pod时，controller-manager 使用 sa.key对token 进行加密，当pod需要访问api-server时，api-server [使用sa.pub](http://使用sa.pub) 解密得到token进行验证。
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4adb143d-8b06-4cc0-b412-6c8b96f8f065/Untitled.png)
+![](/img/kubernetes-crt-2.png)
 
 ## 引用
 
