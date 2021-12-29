@@ -1,3 +1,14 @@
+---
+layout:     post
+title:      "kubeadm 部署kubernetes"
+description: "kubeadm 部署kubernetes"
+date:     2021-12-11
+author: sfeng
+categories: ["Tech", "cloudNative", "ops"]
+tags: ["kubernetes", "kubeadm"]
+URL: "/2021/12/11/kubeadm-install/"
+---
+
 ## 简介
 
 当需要基于 `kubernetes` 环境进行编译调试时，最好能在本地开发环境搭建一套 `kubernetes`
