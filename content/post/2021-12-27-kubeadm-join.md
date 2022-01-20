@@ -101,6 +101,60 @@ func NewCmdJoin(out io.Writer, joinOptions *joinOptions) *cobra.Command {
 }
 ```
 
+### 命令行解析
+
+```go
+func addJoinConfigFlags(flagSet *flag.FlagSet, cfg *kubeadmapiv1beta2.JoinConfiguration, jcp *kubeadmapiv1beta2.JoinControlPlane) {
+	flagSet.StringVar(
+		&cfg.NodeRegistration.Name, options.NodeName, cfg.NodeRegistration.Name,
+		`Specify the node name.`,
+	)
+	flagSet.StringVar(
+    // 用于解密 kubeadm-certs secret 里的CA证书，因为该secret的内容会被加密
+		&jcp.CertificateKey, options.CertificateKey, jcp.CertificateKey,
+		"Use this key to decrypt the certificate secrets uploaded by init.",
+	)
+	// add control plane endpoint flags to the specified flagset
+	flagSet.StringVar(
+		&jcp.LocalAPIEndpoint.AdvertiseAddress, options.APIServerAdvertiseAddress, jcp.LocalAPIEndpoint.AdvertiseAddress,
+		"If the node should host a new control plane instance, the IP address the API Server will advertise it's listening on. If not set the default network interface will be used.",
+	)
+	flagSet.Int32Var(
+		&jcp.LocalAPIEndpoint.BindPort, options.APIServerBindPort, jcp.LocalAPIEndpoint.BindPort,
+		"If the node should host a new control plane instance, the port for the API Server to bind to.",
+	)
+	// adds bootstrap token specific discovery flags to the specified flagset
+	flagSet.StringVar(
+		&cfg.Discovery.BootstrapToken.Token, options.TokenDiscovery, "",
+		"For token-based discovery, the token used to validate cluster information fetched from the API server.",
+	)
+  // 用于验证CA证书的合法性，通过加载secret里的CA内容并做hash运算得出结果与该值比对
+	flagSet.StringSliceVar(
+		&cfg.Discovery.BootstrapToken.CACertHashes, options.TokenDiscoveryCAHash, []string{},
+		"For token-based discovery, validate that the root CA public key matches this hash (format: \"<type>:<value>\").",
+	)
+	flagSet.BoolVar(
+		&cfg.Discovery.BootstrapToken.UnsafeSkipCAVerification, options.TokenDiscoverySkipCAHash, false,
+		"For token-based discovery, allow joining without --discovery-token-ca-cert-hash pinning.",
+	)
+	//	discovery via kube config file flag
+	flagSet.StringVar(
+		&cfg.Discovery.File.KubeConfigPath, options.FileDiscovery, "",
+		"For file-based discovery, a file or URL from which to load cluster information.",
+	)
+	flagSet.StringVar(
+		&cfg.Discovery.TLSBootstrapToken, options.TLSBootstrapToken, cfg.Discovery.TLSBootstrapToken,
+		`Specify the token used to temporarily authenticate with the Kubernetes Control Plane while joining the node.`,
+	)
+	cmdutil.AddCRISocketFlag(flagSet, &cfg.NodeRegistration.CRISocket)
+}
+```
+
+### 注意
+
+> tls-bootstrap-token 可以与 discovery-token 一致，即统一使用 token 配置
+>
+
 ### Preflight
 
 为部署之前做一些节点检查，如果是node节点只执行RunJoinNodeChecks，如果是控制实例，即master节点，会继续执行checkIfReadyForAdditionalControlPlane，然后执行checkIfReadyForAdditionalControlPlane，RunInitNodeChecks，RunPullImagesCheck
@@ -344,6 +398,7 @@ func runControlPlanePrepareCertsPhaseLocal(c workflow.RunData) error {
 	fmt.Printf("[certs] Using certificateDir folder %q\n", cfg.CertificatesDir)
 
 	// Generate missing certificates (if any)
+  // kubeadm join 创建证书时，会检查本地是否存在ca，以及检查ca是否有效，如果不满足的话，就重新创建，然后使用新的ca 签发证书
 	return certsphase.CreatePKIAssets(cfg)
 }
 ```
