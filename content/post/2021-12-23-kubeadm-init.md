@@ -164,6 +164,53 @@ func newInitOptions() *initOptions {
 	}
 }
 ```
+一般我们会将一个config 传给kubeadm，里面包含所有参数，如：kubeadm init — —config=./kubeadm-config.yaml
+
+```bash
+// 获取 config 参数值
+func AddConfigFlag(fs *pflag.FlagSet, cfgPath *string) {
+	fs.StringVar(cfgPath, CfgPath, *cfgPath, "Path to a kubeadm configuration file.")
+}
+
+// 设置默认 initconfiguration 配置
+func SetInitDynamicDefaults(cfg *kubeadmapi.InitConfiguration) error {
+	if err := SetBootstrapTokensDynamicDefaults(&cfg.BootstrapTokens); err != nil {
+		return err
+	}
+	if err := SetNodeRegistrationDynamicDefaults(&cfg.NodeRegistration, true); err != nil {
+		return err
+	}
+	// 如果config.yaml 没有配置 advertiseAddress 字段，那么就会根据主机 /proc/net/route 文件获取主机网卡名，再根据网卡名获取该网卡IP作为advertiseAddress。所以主机存在多个ipv4 网卡，可能使得advertiseAddress 不是期望的值，所以这个字段最好手动配置。
+	if err := SetAPIEndpointDynamicDefaults(&cfg.LocalAPIEndpoint); err != nil {
+		return err
+	}
+	
+	return SetClusterDynamicDefaults(&cfg.ClusterConfiguration, &cfg.LocalAPIEndpoint, &cfg.NodeRegistration)
+}
+
+// 根据网卡名获取IP,只要获取成功就退出，所以存在多个可用网卡，会导致获取的IP不是期望值
+func chooseHostInterfaceFromRoute(routes []Route, nw networkInterfacer, addressFamilies AddressFamilyPreference) (net.IP, error) {
+	for _, family := range addressFamilies {
+		klog.V(4).Infof("Looking for default routes with IPv%d addresses", uint(family))
+		for _, route := range routes {
+			if route.Family != family {
+				continue
+			}
+			klog.V(4).Infof("Default route transits interface %q", route.Interface)
+			finalIP, err := getIPFromInterface(route.Interface, family, nw)
+			if err != nil {
+				return nil, err
+			}
+			if finalIP != nil {
+				klog.V(4).Infof("Found active IP %v ", finalIP)
+				return finalIP, nil
+			}
+		}
+	}
+	klog.V(4).Infof("No active IP found by looking at default routes")
+	return nil, fmt.Errorf("unable to select an IP from default routes.")
+}
+```
 
 ## kubeadm init
 
