@@ -9,40 +9,37 @@ tags: ["kubernetes"]
 URL: "/2021/12/10/kubelet-client-crt/"
 ---
 
-## 背景
+# 背景
 
 今天发现线上集群一个node节点kubelet-client证书莫名其妙消失了，导致该节点 NotReady，因为该证书已经没了，导致controller-manager无法自动轮换该证书，所以需要自己签发证书。
 
-## 环境信息
+# 环境信息
 
 ```bash
 $ kubenertes: v1.15.3
 $ centos: 7.5
 $ kernel: 4.14.49
 $ cfssl: 1.2.0
+
 ```
 
-## 签发证书
+# 签发证书
 
 kubelet访问api-server是双向https协议，所以kubelet 会验证api-server，api-server也会验证kubelet。目前出问题的是api-server验证kubelet时，kubelet无法提供证书，所以我们需要使用api-server验证kubelet的CA来签发kubelet-client.crt。
 
 这里使用cfssl工具签发证书。
 
-1、安装cfssl
+1、安装cfssl，cfssljson
 
 ```bash
 https://github.com/cloudflare/cfssl/releases
-mv cfssl /usr/bin
 ```
 
-2、获取ca.crt，ca.key
+2、获取ca.crt，ca.key，可以直接从api-server所在服务器拷贝
 
-可以直接从api-server所在服务器拷贝
+3、生成ca-config.json，将以下信息写入ca-config.json
 
-3、生成ca-config.json
-
-```bash
-# 将一下信息写入ca-config.json
+```json
 {
   "signing": {
     "default": {
@@ -61,28 +58,31 @@ mv cfssl /usr/bin
     }
   }
 }
+
 ```
 
-4、生成kubelet-client证书请求文件
+4、生成kubelet-client证书请求文件，将以下信息写入 `kubelet-client-csr.json`
 
-```bash
-# 将以下信息写入kubelet-client-csr.json
+```json
+
 {
-        "CN": "system:node:node-1",   # 修改对应节点hostname
+        "CN": "system:node:node-1",
         "key": {
                 "algo": "rsa",
-                "size": 2048
+                "size":2048
         },
         "names": [{
                 "O": "system:nodes"
         }]
 }
+
 ```
 
 5、生成证书
 
 ```bash
 $ cfssl gencert -ca=ca.crt -ca-key=ca.key --config=ca-config.json -profile=kubernetes kubelet-client-csr.json | cfssljson -bare kubelet-client
+
 ```
 
 6、修改kubelet.conf
@@ -91,7 +91,7 @@ $ cfssl gencert -ca=ca.crt -ca-key=ca.key --config=ca-config.json -profile=kuber
 
 将生成crt，key放入对应目录下，这里为/var/lib/kubelet/pki/kubelet-client.crt、/var/lib/kubelet/pki/kubelet-client.key
 
-```bash
+```yaml
 apiVersion: v1
 clusters:
 - cluster:
@@ -112,10 +112,11 @@ users:
   user:
     client-certificate: /var/lib/kubelet/pki/kubelet-client.crt
     client-key: /var/lib/kubelet/pki/kubelet-client.key
+
 ```
 
 7、重启kubelet
 
 ```bash
-systemctl restart kubelet
+$ systemctl restart kubelet
 ```
