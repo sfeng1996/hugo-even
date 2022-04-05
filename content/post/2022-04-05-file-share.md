@@ -25,7 +25,7 @@ linux 操作系统通过硬链接(Hard Link)与软连接(Soft Link)两种方式�
 
 硬链接的实现方式为多个文件的目录项的索引节点指针指向同一个索引节点，所以通过硬链接创建的文件其属性除了文件名不同，其余属性和源文件相同。
 
-![Untitled](../../images/file-share-hard.png)
+![Untitled](/img/file-share-hard.png)
 
 索引结点中设置一个链接计数变量count,用于表示链接到本索引结点上的用户目录项数。
 
@@ -39,7 +39,7 @@ linux 操作系统通过硬链接(Hard Link)与软连接(Soft Link)两种方式�
 
 文件1删除，但是文件2依然存在，只是通过`C:/User1/aaa`这个路径已经找不到文件1了
 
-![Untitled](../../images/file-share-soft.png)
+![Untitled](/img/file-share-soft.png)
 
 通过软连接的文件其属性与源文件不同，因为他们指向不同的索引节点
 
