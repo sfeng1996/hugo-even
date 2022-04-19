@@ -2,7 +2,7 @@
 layout:     post
 title:      "go get 私有仓库"
 description: "go get 私有仓库"
-date:     2022-04-018
+date:     2022-04-18
 author: sfeng
 categories: ["Tech", "dev"]
 tags: ["GOLANG"]
