@@ -580,6 +580,31 @@ Environment="KUBELET_EXTRA_ARGS=--feature-gates=RotateKubeletServerCertificate=t
     - --feature-gates=RotateKubeletServerCertificate=true # 该参数表示自动同意，可以不配置，因为server的请求不会自动批准，需要手动批准。
 ```
 
+# kubelet的服务端证书
+
+`kubelet`同样对外暴露了HTTPS服务，其客户端主要是`kube-apiserver`和一些监控组件，如`metric-server`。`kube-apiserver`需要访问`kubelet`来获取容器的日志和执行命令（kubectl logs/exec)， 监控组件需要访问`kubelet`暴露的cadvisor接口来获取监控信息。理想情况下，我们需要将`kubelet`的CA证书配置到`kube-apiserver`和`metric-server`中，以便于校验`kubelet`的服务端证书，保证安全性。但使用默认的集群设置方法是无法做到这点的，需要做一些额外的工作。
+
+Kubernetes中除了`kubelet`的服务端证书以外，其他证书都要由集群根CA（或是基于根CA的中间CA）签发。`kubelet`的证书则没有这个要求。实际上，在`kubelet`在启动时，如果没有指定服务端证书路径，会创建一个自签的CA证书，并使用该CA为自己签发服务端证书。
+
+> kubelet 也可以使用服务端（Serving）证书。kubelet自身向外提供一个HTTPS末端，包含若干功能特性。要保证这些末端的安全性，kubelet可以执行以下操作之一：
+>
+> - 使用通过 --tls-private-key-file 和 --tls-cert-file 所设置的密钥和证书
+> - 如果没有提供密钥和证书，则创建自签名的密钥和证书
+> - 通过 CSR API 从集群服务器请求服务证书
+>
+> 文档参考：[kubernetes.io/docs/refere…](https://link.juejin.cn/?target=https%3A%2F%2Fkubernetes.io%2Fdocs%2Freference%2Fcommand-line-tools-reference%2Fkubelet-tls-bootstrapping%2F%23client-and-serving-certificates)
+>
+
+这意味着每个`kubelet`的根CA都不一样，这就导致客户端组件，如`metric-server`，甚至是`kube-apiserver`都没办法校验`kubelet`的服务端证书。为了应对这种情况，`metric-server`需要添加`--kubelet-insecure-tls`来跳过服务端证书的校验，而`kube-apiserver`默认不校验`kubelet`服务端证书。
+
+那可不可以像申请客户端证书一样，使用CSR来申请服务端证书呢？CSR签发者统一用集群的根CA为各`kubelet`签发服务端证书，`kube-apiserver`和其他组件就可以通过配置集群根CA来实现HTTPS的服务端证书校验了。答案是可以的，我们可以在`kubelet`配置文件配置`serverTLSBootstrap`为true就可以启用这项特性，即使用CSR来申请服务端证书，而不是使用自签CA来签发证书。这项配置同样也会开启服务端证书的自动轮换功能。不过这个过程并不是全自动的，在**证书轮换**章节中提到，kubelet的服务端证书CSR请求，即`singerName`为`kubernetes.io/kubelet-serving`的CSR请求，不会被`kube-controller-manager`自动批准，也就是说我们需要手动批准这些CSR，或者使用第三方控制器。
+
+为什么Kubernetes不自动批准`kubelet`的服务端证书呢？这样不是很方便吗？原因是出于安全考量——Kubernetes没有足够的能力来辨别该CSR是否应该被批准。
+
+HTTPS服务端证书的重要作用就是向客户端证明“我是我”，防止有人冒充“我”跟客户端通信，也就是防止中间人攻击。在向权威CA机构申请证书时，我们要提供一系列证明材料，证明这个站点是我的，包括要证明我是该站点域名的所有者，CA审核通过后才会签发证书。但K8S集群本身是没有足够的能力来辨别`kubelet`身份的，因为节点IP，DNS名称可能发生变化，K8S自身没有足够的能力判断哪些IP，哪些DNS是合法的，这属于基础设施管理者的职责范围。如果你的集群是云厂商提供，那么你的云厂商可以提供对应的控制器来判断CSR请求的合法性，批准合法的CSR请求。如果是自建集群，那么只有集群管理员才能判断CSR请求中包含的节点IP，DNS名称是不是真实有效的。如果`kube-controller-manager`自动签发这些证书，则会产生中间人攻击的风险。
+
+这个[PR](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fkubernetes%2Fcommunity%2Fpull%2F1982%2Fcommits%2F5da5a0ae9752bbbc1f139aa1560f9b9b5447446b)描述了一种中间人攻击的具体场景。假设节点A上的服务`bar`使用HTTPS暴露服务，并且服务端证书是通过CSR请求申请的，由集群根CA签发。假设有入侵者获取了节点A的权限，那他可以很方便的利用`kubelet`的客户端证书的权限，创建一个CSR请求来申请一份IP为`bar`service IP，DNS名称为`bar`service DNS的服务端证书。如果`kube-controller-manager`自动通过并签发这个证书，那入侵者就可以使用这个证书，配合节点上的`kube-proxy`，劫持所有经过`bar`服务的流量。
+
 # **Service Account 认证**
 
 在k8s 集群内部访问 apiserver 使用的是service account ，如pod访问apiserver
