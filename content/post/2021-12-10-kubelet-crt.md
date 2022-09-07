@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "kubelet-client证书自签"
-description: "kubelet-client证书自签"
+title:      "kubelet-client, kubeconfig 证书自签"
+description: "kubelet-client, kubeconfig证书自签"
 date:     2021-12-10
 author: sfeng
 categories: ["Tech", "cloudNative", "ops"]
@@ -23,7 +23,7 @@ $ cfssl: 1.2.0
 
 ```
 
-# 签发证书
+# 签发 kubelet 证书
 
 kubelet访问api-server是双向https协议，所以kubelet 会验证api-server，api-server也会验证kubelet。目前出问题的是api-server验证kubelet时，kubelet无法提供证书，所以我们需要使用api-server验证kubelet的CA来签发kubelet-client.crt。
 
@@ -116,7 +116,63 @@ users:
 ```
 
 7、重启kubelet
-
 ```bash
 $ systemctl restart kubelet
+```
+
+# 签发 kubeconfig 证书
+
+1、生成 kubeconfig 证书请求文件，将以下信息写入 `admin-csr.json`
+
+```json
+
+{
+	"CN": "kubernetes-admin",
+	# 集群 master ip
+	"hosts": [
+		"172.16.8.60", "172.16.8.61", "172.16.8.62"
+	],
+	"key": {
+		"algo": "rsa",
+		"size": 2048
+	},
+	"names": [{
+		"C": "CN",
+		"O": "system:masters"
+	}]
+}
+
+```
+2、生成证书
+
+```bash
+$ cfssl gencert -ca=ca.crt -ca-key=ca.key --config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
+
+```
+
+3、修改 kubeconfig
+将 kubeconfig 文件里证书路径替换为新生成的证书，或者将新生成的证书内容进行 base64 编码，替换 kubeconfig 文件内容。
+
+```bash
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM2VENDQWRHZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQ0FYRFRJeU1Ea3dOakE1TWpFMU5sb1lEekl4TWpJd09ERXpNRGt5TVRVMldqQVZNUk13RVFZRApWUVFERXdwcmRXSmxjbTVsZEdWek1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBCitTWHZXcENhLzVMUHdKWmVhMkZ0RitQZU9na2VZM0hFcGZJTVNsdkNQZjQyL1U4bFJTTXhGeEc5b0Jaa3J3bHoKeEgxRHRlNXhVN0szZGZtMm1zdGd4bVhCQ3FialhnRStHNlk1Q3JLYmdkOE1ucGJjeXhvQ2l4OHB4RVZNaHpFbApwZm1KL29vc2ZtbHcrNk1vZ29hNkVDT2pnRWloZDZidDdNblJMcCs4Z1M4djR6a09SWWNxaEFjSjYwc0t3QmF3Cm51TlFmRERqeVMvbHp2WDhoa0JXeWVFUTdYZzVHQWdNbFFQSVgyZFRoQU1weE1VUWxCZS9LTURVQ0hQeEd0UkcKL3l3Y3BnTG9ZUTE4K2Q1czFVM3VORXdlalVxQzBQRkZabjFyZmZYR3NmZU5CN1EwSy81alpmWUUwaUtncWlDdQpES1pZd0R3ODRseVhOM0tMU3Npcll3SURBUUFCbzBJd1FEQU9CZ05WSFE4QkFmOEVCQU1DQXFRd0R3WURWUjBUCkFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvdGtEZVBUQkJGemFUWXdXQmpuMXl2SC8yeWN3RFFZSktvWkkKaHZjTkFRRUxCUUFEZ2dFQkFQZjZCcEd6TGY2L0RhdzdkS2FvbTlTYzFQWWZ1dDdRWlQ0Q3hOdXJuSVFTd04rZQpGSys5MzJYVVhoVnExWUx0N1RpcE9xc0JMOXBlS0p6YUtmQmpoN1N1WVV2OTM1TkxZaXEySTkyWXJwVEtyWlpxCjhvQ3BnQWloZEFmaVpOekkyK0NoZVRKOVhOek5yZTRSdW04cVM4ZVRFWEN5UW5Fd2RQU1RyUFJuR2M5OEdXQlcKYW5Gc0NiYnZpYnoyY3d4LytXLzlnSzFGaW5zOUhhNE5yS0hQbldsalppOExycTlSN1RlSDNBRzVFT3dZek0rUAo3UGJnYTdhK24wWUpQVGtqb3VqUWRkYmdaQ01VSjNxc0Z3dE1LemhybTZQZGtGQ0dpSWg5elhlMGthdk4ybnlEClVVaUdVM2FmK2UyTXQyTE42Mk5SM3dpYXBJNS9QTUdrajFjVC9zMD0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    server: https://apiserver.cluster.local:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin
+  user:
+    # 修改这里即可
+    client-certificate: /path/to/kubeconfig.pem
+    client-key: /path/to/kubeconfig-key.pem
+
 ```
