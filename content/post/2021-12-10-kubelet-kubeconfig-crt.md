@@ -12,6 +12,7 @@ URL: "/2021/12/10/kubelet-client-crt/"
 # 背景
 
 今天发现线上集群一个node节点kubelet-client证书莫名其妙消失了，导致该节点 NotReady，因为该证书已经没了，导致controller-manager无法自动轮换该证书，所以需要自己签发证书。
+以及 kubeconfig 也失效，导致 kubectl 使用不了
 
 # 环境信息
 
