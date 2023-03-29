@@ -2,11 +2,11 @@
 layout:     post
 title:      "go for-range 的坑"
 description: "go for-range 的坑"
-date:     2029-06-21
+date:     2021-06-21
 author: sfeng
 categories: ["Tech", "cloudNative", "go"]
 tags: ["kubernetes", "kubeadm"]
-URL: "/2020/06/21/go-forrange"
+URL: "/2021/06/21/go-forrange"
 ---
 
 ## 简介
