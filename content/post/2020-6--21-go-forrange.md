@@ -91,7 +91,7 @@ for i := range v {
 //   }
 ```
 
-### 3、****对大数组遍历****
+### 3、对大数组遍历
 
 ```go
 var arr = [102400]int{1, 1, 1} 
@@ -121,7 +121,7 @@ for i, n := range &arr
 for i, n := range arr[:]
 ```
 
-### 4、****goroutine 加 闭包****
+### 4、goroutine 加 闭包
 
 ```go
 var m = []int{1, 2, 3}
