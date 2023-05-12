@@ -4,8 +4,7 @@ title:      "手动配置service、endpoint 访问集群外服务"
 description: "手动配置service、endpoint 访问集群外服务"
 date:     2022-06-06
 author: sfeng
-categories: ["Tech", "dev"]
-tags: ["Kubernetes"]
+tags: ["kubernetes-ops"]
 URL: "/2022/06/06/k8s-service-endpoint/"
 ---
 

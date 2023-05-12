@@ -4,8 +4,7 @@ title:      "操作系统文件共享"
 description: "file share"
 date:     2022-04-05
 author: sfeng
-categories: ["Tech", "dev"]
-tags: ["OS"]
+tags: ["linux"]
 URL: "/2022/04/05/file-share/"
 ---
 # 文件共享

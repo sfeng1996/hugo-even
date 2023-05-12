@@ -4,8 +4,7 @@ title:      "kubeadm join 源码解析"
 description: "kubeadm join 源码解析"
 date:     2021-12-27
 author: sfeng
-categories: ["Tech", "cloudNative", "dev"]
-tags: ["kubernetes", "kubeadm"]
+tags: ["kubernetes-dev"]
 URL: "/2021/12/27/kubeadm-join/"
 ---
 这篇讲解kubeadm join 源码，使用 kubeadm 安装多master集群的朋友都知道，kubeadm join 包括master加入到已有集群和worker 加入到已有集群，所以kubeadm join 需要分角色讲解。

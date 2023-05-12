@@ -4,8 +4,7 @@ title:      "kubeadm 部署kubernetes"
 description: "kubeadm 部署kubernetes"
 date:     2021-12-11
 author: sfeng
-categories: ["Tech", "cloudNative", "ops"]
-tags: ["kubernetes", "kubeadm"]
+tags: ["kubernetes-ops"]
 URL: "/2021/12/11/kubeadm-install/"
 ---
 

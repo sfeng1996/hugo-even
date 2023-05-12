@@ -4,8 +4,7 @@ title:      "go for-range 的坑"
 description: "go for-range 的坑"
 date:     2021-06-21
 author: sfeng
-categories: ["Tech", "cloudNative", "go"]
-tags: ["kubernetes", "kubeadm"]
+tags: ["Golang"]
 URL: "/2021/06/21/go-forrange"
 ---
 

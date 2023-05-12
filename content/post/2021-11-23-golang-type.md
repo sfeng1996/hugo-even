@@ -5,8 +5,7 @@ description: "本文讲述golang类型系统及使用"
 except: "本文讲述golang类型系统及使用"
 date:     2021-11-23
 author: "sfeng"
-categories: ["Tech", "golang", "dev"]
-tags: []
+tags: ["Golang"]
 URL: "/2021/11/23/golang-type/"
 ---
 

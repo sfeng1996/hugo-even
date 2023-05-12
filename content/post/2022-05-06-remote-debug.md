@@ -4,8 +4,7 @@ title:      "远程调试 golang 程序"
 description: "远程调试 golang 程序"
 date:     2022-05-06
 author: sfeng
-categories: ["Tech", "dev"]
-tags: ["golang"]
+tags: ["Golang"]
 URL: "/2022/05/remote-debug/"
 ---
 

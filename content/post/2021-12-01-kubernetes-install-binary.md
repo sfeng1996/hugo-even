@@ -4,8 +4,7 @@ title:      "二进制部署kubernetes"
 description: "二进制部署kubernetes"
 date:     2021-12-10
 author: sfeng
-categories: ["Tech", "cloudNative", "ops"]
-tags: ["kubernetes"]
+tags: ["kubernetes-ops"]
 URL: "/2021/12/10/kubernetes-install-binary/"
 ---
 

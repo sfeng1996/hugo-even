@@ -4,8 +4,7 @@ title:      "kubeadm init 源码解析"
 description: "kubeadm init 源码解析"
 date:     2021-12-23
 author: sfeng
-categories: ["Tech", "cloudNative", "dev"]
-tags: ["kubernetes", "kubeadm"]
+tags: ["kubernetes-dev"]
 URL: "/2021/12/23/kubeadm-init/"
 ---
 

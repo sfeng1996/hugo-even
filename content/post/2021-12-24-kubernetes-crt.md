@@ -4,8 +4,7 @@ title:      "kubernetes 证书详解"
 description: "kubernetes 证书详解"
 date:     2021-12-24
 author: sfeng
-categories: ["Tech", "cloudNative", "ops"]
-tags: ["kubernetes", "security"]
+tags: ["kubernetes-ops"]
 URL: "/2021/12/24/kubernetes-cert/"
 ---
 

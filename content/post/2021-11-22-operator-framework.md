@@ -5,8 +5,7 @@ description: "本文演示使用operator-framework开发一个operator demo"
 except: "本文演示使用operator-framework开发一个operator demo"
 date:     2021-11-22
 author: "sfeng"
-categories: ["Tech", "cloudNative", "dev"]
-tags: ["kubernetes", "operator"]
+tags: ["kubernetes-dev"]
 URL: "/2021/11/22/operator-framework/"
 ---
 

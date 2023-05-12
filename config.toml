@@ -28,26 +28,16 @@ copyright = ""            # default: author.name ↓        # 默认为下面配
   priority = 0.5
   filename = "sitemap.xml"
 
-[[menu.main]]             # config your menu              # 配置目录
-  name = "Home"
-  weight = 10
-  identifier = "home"
-  url = "/"
-[[menu.main]]
-  name = "Archives"
-  weight = 20
-  identifier = "archives"
-  url = "/post/"
 [[menu.main]]
   name = "Tags"
   weight = 30
   identifier = "tags"
   url = "/tags/"
 [[menu.main]]
-  name = "Categories"
-  weight = 40
-  identifier = "categories"
-  url = "/categories/"
+  name = "About"
+  weight = 20
+  identifier = "about"
+  url = "/about/"
 
 [params]
   version = "4.x"           # Used to give a friendly message when you have an incompatible update
@@ -200,7 +190,7 @@ copyright = ""            # default: author.name ↓        # 默认为下面配
     #l-tumblr = "http://localhost:1313"
     #m-instagram = "http://localhost:1313"
     #n-gitlab = "http://localhost:1313"
-    #o-bilibili = "http://localhost:1313"
+    o-bilibili = "https://space.bilibili.com/382859797?spm_id_from=333.1007.0.0"
 
 # See https://gohugo.io/about/hugo-and-gdpr/
 [privacy]

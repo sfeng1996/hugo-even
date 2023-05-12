@@ -5,8 +5,7 @@ description: "本文演示使用kubebuilder开发一个cronjob控制器"
 except: "本文演示使用kubebuilder开发一个operator demo"
 date:     2021-11-29
 author:  "sfeng"
-categories: ["Tech", "cloudNative"]
-tags: ["kubernetes", "operator"]
+tags: ["kubernetes-dev"]
 URL: "/2021/11/29/operator-kubebuilder/"
 ---
 
